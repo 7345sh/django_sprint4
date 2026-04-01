@@ -11,7 +11,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'text', 'pub_date', 'category', 'location', 'image']
+        fields = ['title', 'text', 'pub_date', 'category', 'location', 'image', 'is_published']  # Добавлено is_published
         widgets = {
             'pub_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
