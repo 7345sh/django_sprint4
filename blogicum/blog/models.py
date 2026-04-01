@@ -120,9 +120,10 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    objects: (
-        PublishedPostQuerySet | models.QuerySet
-    ) = PublishedPostQuerySet.as_manager()
+    # Исправлено: используем стандартный менеджер, а не PublishedPostQuerySet
+    objects = models.Manager()
 
+    class Meta:
+        ordering = ['created_at']
     class Meta:
         ordering = ['created_at']
