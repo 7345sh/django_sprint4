@@ -103,7 +103,7 @@ class UserProfileView(ListView):
 
     model = Post
     template_name: str = 'blog/profile.html'
-    context_object_name: str = 'posts'
+    context_object_name: str = 'page_obj'  # Исправлено для пагинации
     slug_field: str = 'username'
     slug_url_kwarg: str = 'username'
     paginate_by: int = settings.BLOG_POSTS_PER_PAGE
@@ -118,10 +118,10 @@ class UserProfileView(ListView):
         if self.request.user == user:
             queryset = Post.objects.filter(author=user).order_by('-pub_date')
         else:
-            queryset = Post.objects.filter(
+            # Используем метод published() и проверяем категорию
+            queryset = Post.published().filter(
                 author=user,
-                is_published=True,
-                pub_date__lte=timezone.now()
+                category__is_published=True  # Добавлена проверка категории
             ).order_by('-pub_date')
         return queryset
 
@@ -254,6 +254,9 @@ def delete_comment(
 
     if not request.method == 'POST':
         return render(request, 'blog/comment.html', {'comment': comment})
+
+    comment.delete()
+    return redirect('blog:post_detail', post_id=post_id)
 
     comment.delete()
     return redirect('blog:post_detail', post_id=post_id)
